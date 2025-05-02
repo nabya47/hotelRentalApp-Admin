@@ -1,25 +1,21 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-export const API_URL = process.env.REACT_APP_API_URL || "https://hotel-rental-app-server.vercel.app";
-
+export const API_URL = process.env.REACT_APP_API_URL || "https://hotelrentalappserver.up.railway.app";
 const user = JSON.parse(localStorage.getItem("user"));
-
 export const registerUser = createAsyncThunk(
   "auth/register",
   async (userData, thunkApi) => {
     try {
-      const res = await fetch(`${API_URL}/users`, {
+      const res = await fetch(`${API_URL}/api/users`, {
         headers: {
           "Content-Type": "application/json",
         },
         method: "POST",
         body: JSON.stringify(userData),
       });
-
       if (!res.ok) {
         const error = await res.json();
         return thunkApi.rejectWithValue(error);
       }
-
       const data = await res.json();
       return data;
     } catch (error) {
@@ -31,22 +27,19 @@ export const loginUser = createAsyncThunk(
   "auth/login",
   async (userData, thunkApi) => {
     try {
-      const res = await fetch(`${API_URL}/users/login`, {
+      const res = await fetch(`${API_URL}/api/users/login`, {
         headers: {
           "Content-Type": "application/json",
         },
         method: "POST",
         body: JSON.stringify(userData),
       });
-
       if (!res.ok) {
         const error = await res.json();
         return thunkApi.rejectWithValue(error);
       }
-
       const data = await res.json();
       console.log(data);
-
       //   set the data in localstorage
       localStorage.setItem("user", JSON.stringify(data));
       return data;
@@ -55,17 +48,15 @@ export const loginUser = createAsyncThunk(
     }
   }
 );
-
 export const logoutUser = createAsyncThunk(
   "auth/logout",
   async (_, thunkApi) => {
     try {
-      const res = await fetch(`${API_URL}/users/logout`);
+      const res = await fetch(`${API_URL}/api/users/logout`);
       if (!res.ok) {
         const error = await res.json();
         return thunkApi.rejectWithValue(error);
       }
-
       const data = await res.json();
       //   remove user rrom local storage
       localStorage.removeItem("user");
@@ -75,7 +66,6 @@ export const logoutUser = createAsyncThunk(
     }
   }
 );
-
 const initialState = {
   user: user ? user : null,
   isLoading: false,
@@ -83,7 +73,6 @@ const initialState = {
   isError: false,
   message: "",
 };
-
 export const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -138,6 +127,5 @@ export const authSlice = createSlice({
       });
   },
 });
-
 export const { reset } = authSlice.actions;
 export default authSlice.reducer;
